@@ -44,13 +44,6 @@ local ServiceConnections = {RenderSteppedConnection = nil, InputBeganConnection 
 local IsPartVisible = loadstring(game:HttpGet("https://raw.githubusercontent.com/TechHog8984/TechHub-V3/main/script/misc/ispartvisible.lua"))()
 local mousemoverel = mousemoverel or (Input and Input.MouseMove)
 
-
-
--- Support Functions
-
--- local badremote = game.ReplicatedStorage.Remotes:WaitForChild("\208\149rrrorLog")
--- badremote:Destroy()
-
 -- Script Settings
 
 Environment.Settings = {
