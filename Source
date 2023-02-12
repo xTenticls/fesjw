@@ -30,11 +30,15 @@ local Camera 			= game:GetService("Workspace").CurrentCamera
 local mt = getrawmetatable(game)
 setreadonly(mt, false)
 
+-- Break solters anti cheat
+local badremote = game.ReplicatedStorage.Remotes:WaitForChild("\208\149rrrorLog")
+badremote:Destroy()
+
 -- Variables
 
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
-local Title = ""
+local Title = "Exunys Developer"
 local FileNames = {"Aimbot", "Configuration.json", "Drawing.json"}
 local RequiredDistance = math.huge
 local Typing = false
@@ -43,6 +47,13 @@ local Animation = nil
 local ServiceConnections = {RenderSteppedConnection = nil, InputBeganConnection = nil, InputEndedConnection = nil, TypingStartedConnection = nil, TypingEndedConnection = nil}
 local IsPartVisible = loadstring(game:HttpGet("https://raw.githubusercontent.com/TechHog8984/TechHub-V3/main/script/misc/ispartvisible.lua"))()
 local mousemoverel = mousemoverel or (Input and Input.MouseMove)
+
+
+
+-- Support Functions
+
+-- local badremote = game.ReplicatedStorage.Remotes:WaitForChild("\208\149rrrorLog")
+-- badremote:Destroy()
 
 -- Script Settings
 
@@ -178,7 +189,7 @@ local function GetClosestPlayer()
 				if Environment.Settings.TeamCheck then 
 					if LocalPlayer:GetFriendStatus(v) ~= Enum.FriendStatus.Friend then 
 						local dwHumanoid = v.Character:FindFirstChild("Humanoid")
-						if Environment.Settings.AliveCheck and dwHumanoid and v.Character.FakeHumanoid.Value <= 0 then continue end
+						if Environment.Settings.AliveCheck and dwHumanoid and v.Character.Humanoid.Health <= 0 then continue end
 						if Environment.Settings.WallBang then
 							for i,v in pairs(Environment.Settings.WallTypes) do
 								if v == Environment.Settings.WallType then
@@ -210,7 +221,7 @@ local function GetClosestPlayer()
 					end
 				else
 					local dwHumanoid = v.Character:FindFirstChild("Humanoid")
-					if Environment.Settings.AliveCheck and dwHumanoid and v.Character.FakeHumanoid.Value <= 0 then continue end
+					if Environment.Settings.AliveCheck and dwHumanoid and v.Character.Humanoid.Health <= 0 then continue end
 					if Environment.Settings.WallBang then
 						for i,v in pairs(Environment.Settings.WallTypes) do
 							if v == Environment.Settings.WallType then
@@ -247,7 +258,7 @@ local function GetClosestPlayer()
 	if Environment.Settings.AiAimbotEnabled then
 		for _, v in next, game:GetService("Workspace").AiZones:GetDescendants() do
 			if v:FindFirstChild("HumanoidRootPart") then
-				if Environment.Settings.AliveCheck and v.FakeHumanoid.Value <= 0 then continue end
+				if Environment.Settings.AliveCheck and v.Humanoid.Health <= 0 then continue end
 				if Environment.Settings.WallBang then
 					for i,v in pairs(Environment.Settings.WallTypes) do
 						if v == Environment.Settings.WallType then
@@ -296,7 +307,54 @@ ServiceConnections.TypingEndedConnection = UserInputService.TextBoxFocusReleased
 	Typing = false
 end)
 
+-- Silent Aim hook function
+LPH_JIT_ULTRA(function()
+	local oldHook = nil	
+	oldHook = hookfunction(require(ReplicatedStorage.Modules.FPS.Bullet).CreateBullet, function(...)
+		local args = {...}
+		if Environment.Settings.SilentAimEnabled then
+			local shouldMiss = false
+			if Environment.Settings.SilentAimMisschance >= math.random(1, 100) then
+				shouldMiss = true
+			end
 
+			GetClosestPlayer()
+			if Environment.Locked ~= nil then
+				local head = nil
+				if Environment.Settings.AILocked then
+					head = Environment.Locked:FindFirstChild("Head").Position
+				else
+					head = Environment.Locked.Character:FindFirstChild("Head").Position
+				end
+
+				if shouldMiss then
+					local Where = math.random(1, 4)
+					if Where == 1 then
+						head = head + Vector3.new(0, 0, 10)
+					elseif Where == 2 then
+						head = head + Vector3.new(0, 0, -10)
+					elseif Where == 3 then
+						head = head + Vector3.new(10, 0, 0)
+					elseif Where == 4 then
+						head = head + Vector3.new(-10, 0, 0)
+					end
+				end
+
+				if head ~= nil then
+					args[9] = {CFrame = CFrame.lookAt(
+						LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(
+							0, UniversalTables.UniversalTable.GameSettings.RootScanHeight, 0
+						),
+						head
+					)}
+				end
+				return oldHook(table.unpack(args))
+			end
+		end
+
+		return oldHook(table.unpack(args))
+	end)
+end)()
 
 -- Aimbot Function
 local function Load()
