@@ -178,7 +178,7 @@ local function GetClosestPlayer()
 				if Environment.Settings.TeamCheck then 
 					if LocalPlayer:GetFriendStatus(v) ~= Enum.FriendStatus.Friend then 
 						local dwHumanoid = v.Character:FindFirstChild("Humanoid")
-						if Environment.Settings.AliveCheck and dwHumanoid and v.Character.FakeHumanoid.Value <= 0 then continue end
+						if Environment.Settings.AliveCheck and dwHumanoid and v.Character.Humanoid.Health <= 0 then continue end
 						if Environment.Settings.WallBang then
 							for i,v in pairs(Environment.Settings.WallTypes) do
 								if v == Environment.Settings.WallType then
@@ -210,7 +210,7 @@ local function GetClosestPlayer()
 					end
 				else
 					local dwHumanoid = v.Character:FindFirstChild("Humanoid")
-					if Environment.Settings.AliveCheck and dwHumanoid and v.Character.FakeHumanoid.Value <= 0 then continue end
+					if Environment.Settings.AliveCheck and dwHumanoid and v.Character.Humanoid.Health <= 0 then continue end
 					if Environment.Settings.WallBang then
 						for i,v in pairs(Environment.Settings.WallTypes) do
 							if v == Environment.Settings.WallType then
@@ -247,7 +247,7 @@ local function GetClosestPlayer()
 	if Environment.Settings.AiAimbotEnabled then
 		for _, v in next, game:GetService("Workspace").AiZones:GetDescendants() do
 			if v:FindFirstChild("HumanoidRootPart") then
-				if Environment.Settings.AliveCheck and v.FakeHumanoid.Value <= 0 then continue end
+				if Environment.Settings.AliveCheck and v.Humanoid.Health <= 0 then continue end
 				if Environment.Settings.WallBang then
 					for i,v in pairs(Environment.Settings.WallTypes) do
 						if v == Environment.Settings.WallType then
